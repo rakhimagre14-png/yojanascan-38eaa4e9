@@ -77,23 +77,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "YojanaScan — Find Government Schemes You're Eligible For" },
+      {
+        name: "description",
+        content:
+          "Enter your details and instantly discover Indian central and state government schemes you qualify for. Free eligibility scanner.",
+      },
+      { name: "author", content: "YojanaScan" },
+      { property: "og:title", content: "YojanaScan — Government Scheme Eligibility Scanner" },
+      {
+        property: "og:description",
+        content:
+          "Answer a few questions and see every government scheme you qualify for — scholarships, housing, farming, health and more.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
+
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
