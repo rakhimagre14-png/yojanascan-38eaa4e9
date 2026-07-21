@@ -43,6 +43,9 @@ import {
   type Profile,
   evaluate,
 } from "@/lib/schemes";
+import { useI18n } from "@/lib/i18n";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { SchemeSearch } from "@/components/SchemeSearch";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -78,10 +81,10 @@ const emptyProfile: Profile = {
 };
 
 const STEPS = [
-  { id: 0, title: "Personal", icon: ShieldCheck },
-  { id: 1, title: "Location", icon: MapPin },
-  { id: 2, title: "Livelihood", icon: Landmark },
-  { id: 3, title: "Documents", icon: FileText },
+  { id: 0, key: "aboutYou", icon: ShieldCheck },
+  { id: 1, key: "whereLive", icon: MapPin },
+  { id: 2, key: "workIncome", icon: Landmark },
+  { id: 3, key: "docsTitle", icon: FileText },
 ] as const;
 
 function Home() {
@@ -140,15 +143,15 @@ function Home() {
                 onClick={() => setStep((s) => Math.max(0, s - 1))}
                 disabled={step === 0}
               >
-                <ArrowLeft className="mr-2 size-4" /> Back
+                <ArrowLeft className="mr-2 size-4" /> {useI18n().t("back")}
               </Button>
               {step < STEPS.length - 1 ? (
                 <Button onClick={() => setStep((s) => s + 1)} className="min-w-32">
-                  Next <ArrowRight className="ml-2 size-4" />
+                  {useI18n().t("next")} <ArrowRight className="ml-2 size-4" />
                 </Button>
               ) : (
                 <Button onClick={submit} className="min-w-40 bg-[color:var(--seal)] text-ink hover:brightness-95">
-                  <ScanLine className="mr-2 size-4" /> Scan schemes
+                  <ScanLine className="mr-2 size-4" /> {useI18n().t("scanSchemes")}
                 </Button>
               )}
             </div>
@@ -173,9 +176,10 @@ function Home() {
 /* ---------- Header ---------- */
 
 function Header() {
+  const { t } = useI18n();
   return (
     <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center px-4 py-4 sm:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <a href="/" className="flex items-center gap-2">
           <img
             src={yojanaLogo}
@@ -187,10 +191,11 @@ function Header() {
           <div className="leading-tight">
             <div className="font-display text-lg text-ink">YojanaScan</div>
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-              Govt. scheme eligibility scanner
+              {t("tagline")}
             </div>
           </div>
         </a>
+        <LanguageSelector />
       </div>
     </header>
   );
@@ -199,8 +204,9 @@ function Header() {
 /* ---------- Landing ---------- */
 
 function Landing({ onStart }: { onStart: () => void }) {
+  const { t } = useI18n();
   return (
-    <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-4 text-center sm:px-6">
+    <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-4 py-10 text-center sm:px-6">
       <div className="mx-auto max-w-lg">
         <div className="mx-auto mb-8 flex size-28 items-center justify-center rounded-3xl bg-card shadow-lg ring-1 ring-border">
           <img
@@ -212,16 +218,18 @@ function Landing({ onStart }: { onStart: () => void }) {
           />
         </div>
         <h1 className="font-display text-5xl text-ink sm:text-6xl">YojanaScan</h1>
-        <p className="mt-4 text-lg text-muted-foreground">
-          Government scheme eligibility scanner for India.
-        </p>
+        <p className="mt-4 text-lg text-muted-foreground">{t("welcomeSub")}</p>
         <Button
           size="lg"
           onClick={onStart}
           className="mt-10 h-12 bg-primary px-8 text-primary-foreground"
         >
-          Start <ArrowRight className="ml-2 size-5" />
+          {t("start")} <ArrowRight className="ml-2 size-5" />
         </Button>
+      </div>
+      <div className="mt-12 w-full max-w-xl">
+        <SchemeSearch />
+        <p className="mt-2 text-center text-xs text-muted-foreground">{t("searchHint")}</p>
       </div>
     </main>
   );
@@ -230,11 +238,12 @@ function Landing({ onStart }: { onStart: () => void }) {
 /* ---------- Stepper ---------- */
 
 function Stepper({ current }: { current: number }) {
+  const { t } = useI18n();
   return (
     <div>
       <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-        <span>Step {current + 1} of {STEPS.length}</span>
-        <span className="text-ink">{STEPS[current].title}</span>
+        <span>{t("step")} {current + 1} {t("of")} {STEPS.length}</span>
+        <span className="text-ink">{t(STEPS[current].key)}</span>
       </div>
       <div className="mt-3 flex gap-1.5">
         {STEPS.map((s, i) => (
@@ -265,7 +274,7 @@ function Stepper({ current }: { current: number }) {
                 {done ? <Check className="size-4" /> : <Icon className="size-4" />}
               </div>
               <span className={`text-sm ${active ? "font-semibold text-ink" : "text-muted-foreground"}`}>
-                {s.title}
+                {t(s.key)}
               </span>
               {i < STEPS.length - 1 && <div className="mx-2 h-px flex-1 bg-border" />}
             </div>
@@ -561,36 +570,38 @@ function Results({
   onEdit: () => void;
   onReset: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <main id="results" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <Badge className="bg-[color:var(--seal)]/15 text-ink hover:bg-[color:var(--seal)]/20">
-            Report ready
+            {t("reportReady")}
           </Badge>
           <h1 className="mt-3 font-display text-4xl text-ink sm:text-5xl">
             {profile.name ? `${profile.name}, ` : ""}
-            you may be eligible for{" "}
-            <span className="text-[color:var(--seal)]">{results.eligible.length}</span> scheme
-            {results.eligible.length === 1 ? "" : "s"}.
+            {t("eligibleFor")}{" "}
+            <span className="text-[color:var(--seal)]">{results.eligible.length}</span>{" "}
+            {results.eligible.length === 1 ? t("scheme") : t("schemes")}.
           </h1>
-          <p className="mt-2 max-w-2xl text-muted-foreground">
-            Based on the details you shared. Verify final eligibility on each scheme&rsquo;s official portal
-            before applying.
-          </p>
+          <p className="mt-2 max-w-2xl text-muted-foreground">{t("reportNote")}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={onEdit}>
-            Edit details
+            {t("editDetails")}
           </Button>
           <Button onClick={onReset} className="bg-primary text-primary-foreground">
-            Start over
+            {t("startOver")}
           </Button>
         </div>
       </div>
 
+      <div className="mt-8">
+        <SchemeSearch compact />
+      </div>
+
       <section className="mt-10">
-        <h2 className="font-display text-2xl text-ink">Eligible schemes</h2>
+        <h2 className="font-display text-2xl text-ink">{t("eligibleSchemes")}</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {results.eligible.length === 0 && (
             <div className="rounded-2xl border bg-card p-6 text-sm text-muted-foreground md:col-span-2">
