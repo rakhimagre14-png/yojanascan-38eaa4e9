@@ -176,9 +176,10 @@ function Home() {
 /* ---------- Header ---------- */
 
 function Header() {
+  const { t } = useI18n();
   return (
     <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center px-4 py-4 sm:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <a href="/" className="flex items-center gap-2">
           <img
             src={yojanaLogo}
@@ -190,10 +191,11 @@ function Header() {
           <div className="leading-tight">
             <div className="font-display text-lg text-ink">YojanaScan</div>
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-              Govt. scheme eligibility scanner
+              {t("tagline")}
             </div>
           </div>
         </a>
+        <LanguageSelector />
       </div>
     </header>
   );
@@ -202,8 +204,9 @@ function Header() {
 /* ---------- Landing ---------- */
 
 function Landing({ onStart }: { onStart: () => void }) {
+  const { t } = useI18n();
   return (
-    <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-4 text-center sm:px-6">
+    <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-4 py-10 text-center sm:px-6">
       <div className="mx-auto max-w-lg">
         <div className="mx-auto mb-8 flex size-28 items-center justify-center rounded-3xl bg-card shadow-lg ring-1 ring-border">
           <img
@@ -215,16 +218,18 @@ function Landing({ onStart }: { onStart: () => void }) {
           />
         </div>
         <h1 className="font-display text-5xl text-ink sm:text-6xl">YojanaScan</h1>
-        <p className="mt-4 text-lg text-muted-foreground">
-          Government scheme eligibility scanner for India.
-        </p>
+        <p className="mt-4 text-lg text-muted-foreground">{t("welcomeSub")}</p>
         <Button
           size="lg"
           onClick={onStart}
           className="mt-10 h-12 bg-primary px-8 text-primary-foreground"
         >
-          Start <ArrowRight className="ml-2 size-5" />
+          {t("start")} <ArrowRight className="ml-2 size-5" />
         </Button>
+      </div>
+      <div className="mt-12 w-full max-w-xl">
+        <SchemeSearch />
+        <p className="mt-2 text-center text-xs text-muted-foreground">{t("searchHint")}</p>
       </div>
     </main>
   );
