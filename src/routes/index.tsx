@@ -238,11 +238,12 @@ function Landing({ onStart }: { onStart: () => void }) {
 /* ---------- Stepper ---------- */
 
 function Stepper({ current }: { current: number }) {
+  const { t } = useI18n();
   return (
     <div>
       <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-        <span>Step {current + 1} of {STEPS.length}</span>
-        <span className="text-ink">{STEPS[current].title}</span>
+        <span>{t("step")} {current + 1} {t("of")} {STEPS.length}</span>
+        <span className="text-ink">{t(STEPS[current].key)}</span>
       </div>
       <div className="mt-3 flex gap-1.5">
         {STEPS.map((s, i) => (
@@ -273,7 +274,7 @@ function Stepper({ current }: { current: number }) {
                 {done ? <Check className="size-4" /> : <Icon className="size-4" />}
               </div>
               <span className={`text-sm ${active ? "font-semibold text-ink" : "text-muted-foreground"}`}>
-                {s.title}
+                {t(s.key)}
               </span>
               {i < STEPS.length - 1 && <div className="mx-2 h-px flex-1 bg-border" />}
             </div>
