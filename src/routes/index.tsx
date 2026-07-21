@@ -570,36 +570,38 @@ function Results({
   onEdit: () => void;
   onReset: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <main id="results" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <Badge className="bg-[color:var(--seal)]/15 text-ink hover:bg-[color:var(--seal)]/20">
-            Report ready
+            {t("reportReady")}
           </Badge>
           <h1 className="mt-3 font-display text-4xl text-ink sm:text-5xl">
             {profile.name ? `${profile.name}, ` : ""}
-            you may be eligible for{" "}
-            <span className="text-[color:var(--seal)]">{results.eligible.length}</span> scheme
-            {results.eligible.length === 1 ? "" : "s"}.
+            {t("eligibleFor")}{" "}
+            <span className="text-[color:var(--seal)]">{results.eligible.length}</span>{" "}
+            {results.eligible.length === 1 ? t("scheme") : t("schemes")}.
           </h1>
-          <p className="mt-2 max-w-2xl text-muted-foreground">
-            Based on the details you shared. Verify final eligibility on each scheme&rsquo;s official portal
-            before applying.
-          </p>
+          <p className="mt-2 max-w-2xl text-muted-foreground">{t("reportNote")}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={onEdit}>
-            Edit details
+            {t("editDetails")}
           </Button>
           <Button onClick={onReset} className="bg-primary text-primary-foreground">
-            Start over
+            {t("startOver")}
           </Button>
         </div>
       </div>
 
+      <div className="mt-8">
+        <SchemeSearch compact />
+      </div>
+
       <section className="mt-10">
-        <h2 className="font-display text-2xl text-ink">Eligible schemes</h2>
+        <h2 className="font-display text-2xl text-ink">{t("eligibleSchemes")}</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {results.eligible.length === 0 && (
             <div className="rounded-2xl border bg-card p-6 text-sm text-muted-foreground md:col-span-2">
