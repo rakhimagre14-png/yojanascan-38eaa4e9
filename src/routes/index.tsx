@@ -10,7 +10,6 @@ import {
   MapPin,
   ScanLine,
   ShieldCheck,
-  Sparkles,
   Upload,
   XCircle,
 } from "lucide-react";
