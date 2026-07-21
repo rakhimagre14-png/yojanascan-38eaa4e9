@@ -43,6 +43,9 @@ import {
   type Profile,
   evaluate,
 } from "@/lib/schemes";
+import { useI18n } from "@/lib/i18n";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { SchemeSearch } from "@/components/SchemeSearch";
 
 export const Route = createFileRoute("/")({
   component: Home,
