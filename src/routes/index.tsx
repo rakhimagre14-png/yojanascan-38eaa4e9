@@ -205,137 +205,30 @@ function Header() {
 
 function Landing({ onStart }: { onStart: () => void }) {
   return (
-    <main>
-      <section className="relative overflow-hidden border-b bg-parchment">
-        <div className="absolute inset-0 bg-grid-notice opacity-70" aria-hidden />
-        <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:py-28">
-          <div>
-            <Badge className="rounded-full bg-[color:var(--seal)]/15 text-ink hover:bg-[color:var(--seal)]/20">
-              <Sparkles className="mr-1 size-3.5" /> Free · No sign-up
-            </Badge>
-            <h1 className="mt-5 font-display text-5xl leading-[1.05] text-ink sm:text-6xl">
-              Find every government scheme <em className="not-italic text-[color:var(--seal)]">you actually qualify for.</em>
-            </h1>
-            <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              Answer a short questionnaire about your family, income, and documents — YojanaScan
-              matches you against India&rsquo;s central schemes and tells you exactly what to apply for.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button size="lg" onClick={onStart} className="h-12 bg-primary text-primary-foreground">
-                Start scanning <ArrowRight className="ml-2 size-4" />
-              </Button>
-              <a
-                href="#how"
-                className="inline-flex h-12 items-center rounded-md border border-input px-5 text-sm font-medium hover:bg-secondary"
-              >
-                How it works
-              </a>
-            </div>
-            <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-              <Stat n="17+" label="schemes covered" />
-              <Stat n="4" label="quick steps" />
-              <Stat n="~2 min" label="to your results" />
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="rounded-2xl border bg-card p-6 shadow-xl">
-              <div className="flex items-center justify-between">
-                <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                  Eligibility Report
-                </div>
-                <Badge variant="secondary" className="bg-success/15 text-success">Sample</Badge>
-              </div>
-              <div className="mt-4 space-y-3">
-                <MockRow name="PM-KISAN Samman Nidhi" ok />
-                <MockRow name="Kisan Credit Card" ok />
-                <MockRow name="Ayushman Bharat PMJAY" ok />
-                <MockRow name="PMAY (Urban)" ok={false} />
-                <MockRow name="Sukanya Samriddhi Yojana" ok={false} />
-              </div>
-              <Separator className="my-5" />
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Matched benefits</span>
-                <span className="font-semibold text-ink">₹5.14 lakh / year</span>
-              </div>
-            </div>
-            <div className="absolute -bottom-6 -right-6 hidden size-28 rotate-6 rounded-2xl bg-[color:var(--seal)]/25 blur-2xl sm:block" />
-          </div>
+    <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-4 text-center sm:px-6">
+      <div className="mx-auto max-w-lg">
+        <div className="mx-auto mb-8 flex size-28 items-center justify-center rounded-3xl bg-card shadow-lg ring-1 ring-border">
+          <img
+            src={yojanaLogo}
+            alt="YojanaScan logo"
+            width={112}
+            height={112}
+            className="size-24 object-contain"
+          />
         </div>
-      </section>
-
-      <section id="how" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <h2 className="font-display text-3xl text-ink sm:text-4xl">How YojanaScan works</h2>
-        <p className="mt-2 max-w-2xl text-muted-foreground">
-          A guided form, a rules engine, and a plain-language report — nothing leaves your browser.
+        <h1 className="font-display text-5xl text-ink sm:text-6xl">YojanaScan</h1>
+        <p className="mt-4 text-lg text-muted-foreground">
+          Government scheme eligibility scanner for India.
         </p>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {[
-            { n: "01", t: "Tell us about you", d: "Age, family, location, occupation and income — the basics used by every scheme." },
-            { n: "02", t: "Mark your documents", d: "Tick the papers you have (Aadhaar, PAN, income cert., etc.) or upload them." },
-            { n: "03", t: "Get matched", d: "See eligible schemes, benefits, missing documents and where to apply." },
-          ].map((s) => (
-            <div key={s.n} className="rounded-2xl border bg-card p-6">
-              <div className="font-display text-4xl text-[color:var(--seal)]">{s.n}</div>
-              <div className="mt-3 font-semibold text-ink">{s.t}</div>
-              <p className="mt-1 text-sm text-muted-foreground">{s.d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="schemes" className="border-t bg-parchment">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <h2 className="font-display text-3xl text-ink sm:text-4xl">Schemes we scan</h2>
-          <div className="mt-6 flex flex-wrap gap-2">
-            {[
-              "PMAY (G)", "PMAY (U) 2.0", "PM-KISAN", "KCC", "Ayushman Bharat",
-              "Ayushman Vaya Vandana", "Sukanya Samriddhi", "Ujjwala 2.0",
-              "Post-Matric Scholarship", "Pragati (Girls)", "PM MUDRA",
-              "Stand-Up India", "PM-SYM", "DDRS", "MGNREGA", "PMMVY", "Atal Pension",
-            ].map((s) => (
-              <span
-                key={s}
-                className="rounded-full border bg-card px-3 py-1 text-sm text-ink"
-              >
-                {s}
-              </span>
-            ))}
-          </div>
-          <div className="mt-10">
-            <Button size="lg" onClick={onStart} className="h-12 bg-primary text-primary-foreground">
-              Scan my eligibility <ArrowRight className="ml-2 size-4" />
-            </Button>
-          </div>
-        </div>
-      </section>
+        <Button
+          size="lg"
+          onClick={onStart}
+          className="mt-10 h-12 bg-primary px-8 text-primary-foreground"
+        >
+          Start <ArrowRight className="ml-2 size-5" />
+        </Button>
+      </div>
     </main>
-  );
-}
-
-function Stat({ n, label }: { n: string; label: string }) {
-  return (
-    <div className="flex items-baseline gap-2">
-      <span className="font-display text-2xl text-ink">{n}</span>
-      <span>{label}</span>
-    </div>
-  );
-}
-
-function MockRow({ name, ok }: { name: string; ok: boolean }) {
-  return (
-    <div className="flex items-center justify-between rounded-md border bg-background px-3 py-2 text-sm">
-      <span className="text-ink">{name}</span>
-      {ok ? (
-        <span className="inline-flex items-center gap-1 text-success">
-          <CheckCircle2 className="size-4" /> Eligible
-        </span>
-      ) : (
-        <span className="inline-flex items-center gap-1 text-muted-foreground">
-          <XCircle className="size-4" /> Not now
-        </span>
-      )}
-    </div>
   );
 }
 
