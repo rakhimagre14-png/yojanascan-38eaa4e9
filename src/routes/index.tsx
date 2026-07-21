@@ -81,10 +81,10 @@ const emptyProfile: Profile = {
 };
 
 const STEPS = [
-  { id: 0, title: "Personal", icon: ShieldCheck },
-  { id: 1, title: "Location", icon: MapPin },
-  { id: 2, title: "Livelihood", icon: Landmark },
-  { id: 3, title: "Documents", icon: FileText },
+  { id: 0, key: "aboutYou", icon: ShieldCheck },
+  { id: 1, key: "whereLive", icon: MapPin },
+  { id: 2, key: "workIncome", icon: Landmark },
+  { id: 3, key: "docsTitle", icon: FileText },
 ] as const;
 
 function Home() {
@@ -143,15 +143,15 @@ function Home() {
                 onClick={() => setStep((s) => Math.max(0, s - 1))}
                 disabled={step === 0}
               >
-                <ArrowLeft className="mr-2 size-4" /> Back
+                <ArrowLeft className="mr-2 size-4" /> {useI18n().t("back")}
               </Button>
               {step < STEPS.length - 1 ? (
                 <Button onClick={() => setStep((s) => s + 1)} className="min-w-32">
-                  Next <ArrowRight className="ml-2 size-4" />
+                  {useI18n().t("next")} <ArrowRight className="ml-2 size-4" />
                 </Button>
               ) : (
                 <Button onClick={submit} className="min-w-40 bg-[color:var(--seal)] text-ink hover:brightness-95">
-                  <ScanLine className="mr-2 size-4" /> Scan schemes
+                  <ScanLine className="mr-2 size-4" /> {useI18n().t("scanSchemes")}
                 </Button>
               )}
             </div>
