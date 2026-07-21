@@ -15,6 +15,7 @@ import {
   XCircle,
 } from "lucide-react";
 
+import yojanaLogo from "@/assets/yojanascan-logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -177,9 +178,13 @@ function Header() {
     <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
         <a href="/" className="flex items-center gap-2">
-          <div className="grid size-9 place-items-center rounded-md bg-primary text-primary-foreground">
-            <ScanLine className="size-5" />
-          </div>
+          <img
+            src={yojanaLogo}
+            alt="YojanaScan logo"
+            width={40}
+            height={40}
+            className="size-10 shrink-0"
+          />
           <div className="leading-tight">
             <div className="font-display text-lg text-ink">YojanaScan</div>
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
