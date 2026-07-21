@@ -342,15 +342,23 @@ function MockRow({ name, ok }: { name: string; ok: boolean }) {
 /* ---------- Stepper ---------- */
 
 function Stepper({ current }: { current: number }) {
-  const pct = ((current + 1) / STEPS.length) * 100;
   return (
     <div>
-      <div className="flex items-center justify-between text-xs uppercase tracking-wider text-muted-foreground">
+      <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
         <span>Step {current + 1} of {STEPS.length}</span>
-        <span>{STEPS[current].title}</span>
+        <span className="text-ink">{STEPS[current].title}</span>
       </div>
-      <Progress value={pct} className="mt-2 h-1.5" />
-      <div className="mt-4 flex items-center justify-between">
+      <div className="mt-3 flex gap-1.5">
+        {STEPS.map((s, i) => (
+          <div
+            key={s.id}
+            className={`h-1.5 flex-1 rounded-full transition-colors ${
+              i <= current ? "bg-primary" : "bg-border"
+            }`}
+          />
+        ))}
+      </div>
+      <div className="mt-5 hidden items-center justify-between sm:flex">
         {STEPS.map((s, i) => {
           const Icon = s.icon;
           const active = i === current;
@@ -358,17 +366,17 @@ function Stepper({ current }: { current: number }) {
           return (
             <div key={s.id} className="flex flex-1 items-center gap-2">
               <div
-                className={`grid size-8 place-items-center rounded-full border ${
+                className={`grid size-8 place-items-center rounded-full border transition-colors ${
                   active
-                    ? "border-primary bg-primary text-primary-foreground"
+                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
                     : done
-                      ? "border-success bg-success text-success-foreground"
+                      ? "border-primary/40 bg-primary/10 text-primary"
                       : "border-input bg-background text-muted-foreground"
                 }`}
               >
                 {done ? <Check className="size-4" /> : <Icon className="size-4" />}
               </div>
-              <span className={`hidden text-sm sm:inline ${active ? "text-ink" : "text-muted-foreground"}`}>
+              <span className={`text-sm ${active ? "font-semibold text-ink" : "text-muted-foreground"}`}>
                 {s.title}
               </span>
               {i < STEPS.length - 1 && <div className="mx-2 h-px flex-1 bg-border" />}
