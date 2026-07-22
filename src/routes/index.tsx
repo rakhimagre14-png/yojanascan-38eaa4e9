@@ -27,9 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
   Accordion,
   AccordionContent,
@@ -88,7 +86,8 @@ const STEPS = [
 ] as const;
 
 function Home() {
-  const [step, setStep] = useState(-1); // -1 = landing
+  const { t } = useI18n();
+  const [step, setStep] = useState(-1);
   const [profile, setProfile] = useState<Profile>(emptyProfile);
   const [showResults, setShowResults] = useState(false);
 
@@ -143,15 +142,15 @@ function Home() {
                 onClick={() => setStep((s) => Math.max(0, s - 1))}
                 disabled={step === 0}
               >
-                <ArrowLeft className="mr-2 size-4" /> {useI18n().t("back")}
+                <ArrowLeft className="mr-2 size-4" /> {t("back")}
               </Button>
               {step < STEPS.length - 1 ? (
                 <Button onClick={() => setStep((s) => s + 1)} className="min-w-32">
-                  {useI18n().t("next")} <ArrowRight className="ml-2 size-4" />
+                  {t("next")} <ArrowRight className="ml-2 size-4" />
                 </Button>
               ) : (
                 <Button onClick={submit} className="min-w-40 bg-[color:var(--seal)] text-ink hover:brightness-95">
-                  <ScanLine className="mr-2 size-4" /> {useI18n().t("scanSchemes")}
+                  <ScanLine className="mr-2 size-4" /> {t("scanSchemes")}
                 </Button>
               )}
             </div>
@@ -173,21 +172,13 @@ function Home() {
   );
 }
 
-/* ---------- Header ---------- */
-
 function Header() {
   const { t } = useI18n();
   return (
     <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <a href="/" className="flex items-center gap-2">
-          <img
-            src={yojanaLogo}
-            alt="YojanaScan logo"
-            width={40}
-            height={40}
-            className="size-10 shrink-0"
-          />
+          <img src={yojanaLogo} alt="YojanaScan logo" width={40} height={40} className="size-10 shrink-0" />
           <div className="leading-tight">
             <div className="font-display text-lg text-ink">YojanaScan</div>
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
@@ -195,13 +186,14 @@ function Header() {
             </div>
           </div>
         </a>
-        <LanguageSelector />
+        <div className="flex items-center gap-2">
+          <SchemeSearch variant="icon" />
+          <LanguageSelector />
+        </div>
       </div>
     </header>
   );
 }
-
-/* ---------- Landing ---------- */
 
 function Landing({ onStart }: { onStart: () => void }) {
   const { t } = useI18n();
@@ -209,33 +201,17 @@ function Landing({ onStart }: { onStart: () => void }) {
     <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-4 py-10 text-center sm:px-6">
       <div className="mx-auto max-w-lg">
         <div className="mx-auto mb-8 flex size-28 items-center justify-center rounded-3xl bg-card shadow-lg ring-1 ring-border">
-          <img
-            src={yojanaLogo}
-            alt="YojanaScan logo"
-            width={112}
-            height={112}
-            className="size-24 object-contain"
-          />
+          <img src={yojanaLogo} alt="YojanaScan logo" width={112} height={112} className="size-24 object-contain" />
         </div>
         <h1 className="font-display text-5xl text-ink sm:text-6xl">YojanaScan</h1>
         <p className="mt-4 text-lg text-muted-foreground">{t("welcomeSub")}</p>
-        <Button
-          size="lg"
-          onClick={onStart}
-          className="mt-10 h-12 bg-primary px-8 text-primary-foreground"
-        >
+        <Button size="lg" onClick={onStart} className="mt-10 h-12 bg-primary px-8 text-primary-foreground">
           {t("start")} <ArrowRight className="ml-2 size-5" />
         </Button>
-      </div>
-      <div className="mt-12 w-full max-w-xl">
-        <SchemeSearch />
-        <p className="mt-2 text-center text-xs text-muted-foreground">{t("searchHint")}</p>
       </div>
     </main>
   );
 }
-
-/* ---------- Stepper ---------- */
 
 function Stepper({ current }: { current: number }) {
   const { t } = useI18n();
@@ -285,8 +261,6 @@ function Stepper({ current }: { current: number }) {
   );
 }
 
-/* ---------- Step 1 ---------- */
-
 function StepPersonal({
   profile,
   update,
@@ -294,73 +268,72 @@ function StepPersonal({
   profile: Profile;
   update: <K extends keyof Profile>(k: K, v: Profile[K]) => void;
 }) {
+  const { t } = useI18n();
   return (
     <div className="space-y-6">
-      <SectionHeading title="About you" subtitle="Basic information used by nearly every scheme." />
+      <SectionHeading title={t("aboutYou")} subtitle={t("aboutYouSub")} />
       <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="Full name">
-          <Input value={profile.name} onChange={(e) => update("name", e.target.value)} placeholder="e.g. Priya Sharma" />
+        <Field label={t("fullName")}>
+          <Input value={profile.name} onChange={(e) => update("name", e.target.value)} placeholder={t("namePlaceholder")} />
         </Field>
-        <Field label="Age">
+        <Field label={t("age")}>
           <Input
             type="number"
             min={0}
             max={120}
             value={profile.age ?? ""}
             onChange={(e) => update("age", e.target.value ? Number(e.target.value) : null)}
-            placeholder="e.g. 34"
+            placeholder={t("agePlaceholder")}
           />
         </Field>
-        <Field label="Gender">
+        <Field label={t("gender")}>
           <RadioGroup
             value={profile.gender}
             onValueChange={(v) => update("gender", v as Profile["gender"])}
             className="flex gap-4 pt-2"
           >
             {(["male", "female", "other"] as const).map((g) => (
-              <label key={g} className="flex items-center gap-2 capitalize">
+              <label key={g} className="flex items-center gap-2">
                 <RadioGroupItem value={g} id={`g-${g}`} />
-                {g}
+                {t(g)}
               </label>
             ))}
           </RadioGroup>
         </Field>
-        <Field label="Social category">
+        <Field label={t("category")}>
           <Select value={profile.category} onValueChange={(v) => update("category", v as Profile["category"])}>
-            <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+            <SelectTrigger><SelectValue placeholder={t("selectCategory")} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="general">General</SelectItem>
-              <SelectItem value="obc">OBC</SelectItem>
-              <SelectItem value="sc">SC</SelectItem>
-              <SelectItem value="st">ST</SelectItem>
+              <SelectItem value="general">{t("cat_general")}</SelectItem>
+              <SelectItem value="obc">{t("cat_obc")}</SelectItem>
+              <SelectItem value="sc">{t("cat_sc")}</SelectItem>
+              <SelectItem value="st">{t("cat_st")}</SelectItem>
             </SelectContent>
           </Select>
         </Field>
-        <Field label="Religion">
+        <Field label={t("religion")}>
           <Select value={profile.religion} onValueChange={(v) => update("religion", v as Profile["religion"])}>
-            <SelectTrigger><SelectValue placeholder="Select religion" /></SelectTrigger>
+            <SelectTrigger><SelectValue placeholder={t("selectReligion")} /></SelectTrigger>
             <SelectContent>
               {["hindu","muslim","christian","sikh","buddhist","jain","parsi","other"].map((r) => (
-                <SelectItem key={r} value={r} className="capitalize">{r}</SelectItem>
+                <SelectItem key={r} value={r}>{t(`rel_${r}`)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </Field>
-        <Field label="Person with disability">
+        <Field label={t("pwd")}>
           <label className="flex items-center gap-3 pt-2 text-sm">
             <Checkbox
               checked={profile.disability}
               onCheckedChange={(v) => update("disability", Boolean(v))}
             />
-            Yes, I have a certified disability
+            {t("pwdYes")}
           </label>
         </Field>
       </div>
     </div>
   );
 }
-
-/* ---------- Step 2 ---------- */
 
 function StepLocation({
   profile,
@@ -369,13 +342,14 @@ function StepLocation({
   profile: Profile;
   update: <K extends keyof Profile>(k: K, v: Profile[K]) => void;
 }) {
+  const { t } = useI18n();
   return (
     <div className="space-y-6">
-      <SectionHeading title="Where you live" subtitle="Some benefits depend on state and rural/urban status." />
+      <SectionHeading title={t("whereLive")} subtitle={t("whereLiveSub")} />
       <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="State / UT">
+        <Field label={t("stateUt")}>
           <Select value={profile.state} onValueChange={(v) => update("state", v)}>
-            <SelectTrigger><SelectValue placeholder="Select state" /></SelectTrigger>
+            <SelectTrigger><SelectValue placeholder={t("selectState")} /></SelectTrigger>
             <SelectContent className="max-h-72">
               {INDIAN_STATES.map((s) => (
                 <SelectItem key={s} value={s}>{s}</SelectItem>
@@ -383,41 +357,39 @@ function StepLocation({
             </SelectContent>
           </Select>
         </Field>
-        <Field label="Area">
+        <Field label={t("area")}>
           <RadioGroup
             value={profile.residence}
             onValueChange={(v) => update("residence", v as Profile["residence"])}
             className="flex gap-4 pt-2"
           >
             <label className="flex items-center gap-2">
-              <RadioGroupItem value="rural" id="a-r" /> Rural
+              <RadioGroupItem value="rural" id="a-r" /> {t("rural")}
             </label>
             <label className="flex items-center gap-2">
-              <RadioGroupItem value="urban" id="a-u" /> Urban
+              <RadioGroupItem value="urban" id="a-u" /> {t("urban")}
             </label>
           </RadioGroup>
         </Field>
-        <Field label="BPL / low-income household">
+        <Field label={t("bpl")}>
           <label className="flex items-center gap-3 pt-2 text-sm">
             <Checkbox checked={profile.bpl} onCheckedChange={(v) => update("bpl", Boolean(v))} />
-            Yes, household is below poverty line
+            {t("bplYes")}
           </label>
         </Field>
-        <Field label="Active bank account">
+        <Field label={t("bankAcc")}>
           <label className="flex items-center gap-3 pt-2 text-sm">
             <Checkbox
               checked={profile.hasBankAccount}
               onCheckedChange={(v) => update("hasBankAccount", Boolean(v))}
             />
-            Yes, linked with Aadhaar
+            {t("bankYes")}
           </label>
         </Field>
       </div>
     </div>
   );
 }
-
-/* ---------- Step 3 ---------- */
 
 function StepLivelihood({
   profile,
@@ -426,43 +398,45 @@ function StepLivelihood({
   profile: Profile;
   update: <K extends keyof Profile>(k: K, v: Profile[K]) => void;
 }) {
+  const { t } = useI18n();
+  const occs = ["student","farmer","salaried","selfEmployed","labour","unemployed","homemaker","retired"] as const;
+  const occValueMap: Record<string, string> = {
+    student: "student", farmer: "farmer", salaried: "salaried",
+    selfEmployed: "self_employed", labour: "labour", unemployed: "unemployed",
+    homemaker: "homemaker", retired: "retired",
+  };
   return (
     <div className="space-y-6">
-      <SectionHeading title="Work & income" subtitle="Used to check income ceilings and occupation-linked schemes." />
+      <SectionHeading title={t("workIncome")} subtitle={t("workIncomeSub")} />
       <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="Occupation">
+        <Field label={t("occupation")}>
           <Select value={profile.occupation} onValueChange={(v) => update("occupation", v as Profile["occupation"])}>
-            <SelectTrigger><SelectValue placeholder="Select occupation" /></SelectTrigger>
+            <SelectTrigger><SelectValue placeholder={t("selectOccupation")} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="student">Student</SelectItem>
-              <SelectItem value="farmer">Farmer</SelectItem>
-              <SelectItem value="salaried">Salaried employee</SelectItem>
-              <SelectItem value="self_employed">Self-employed / business</SelectItem>
-              <SelectItem value="labour">Daily wage / unorganised worker</SelectItem>
-              <SelectItem value="unemployed">Unemployed / job-seeker</SelectItem>
-              <SelectItem value="homemaker">Homemaker</SelectItem>
-              <SelectItem value="retired">Retired</SelectItem>
+              {occs.map((k) => (
+                <SelectItem key={k} value={occValueMap[k]}>{t(k)}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </Field>
-        <Field label="Annual family income (₹)">
+        <Field label={t("income")}>
           <Input
             type="number"
             min={0}
             value={profile.annualIncome ?? ""}
             onChange={(e) => update("annualIncome", e.target.value ? Number(e.target.value) : null)}
-            placeholder="e.g. 240000"
+            placeholder={t("incomePlaceholder")}
           />
         </Field>
         {profile.occupation === "farmer" && (
-          <Field label="Land holding (acres)">
+          <Field label={t("land")}>
             <Input
               type="number"
               min={0}
               step="0.1"
               value={profile.landHolding ?? ""}
               onChange={(e) => update("landHolding", e.target.value ? Number(e.target.value) : null)}
-              placeholder="e.g. 2.5"
+              placeholder={t("landPlaceholder")}
             />
           </Field>
         )}
@@ -471,8 +445,6 @@ function StepLivelihood({
   );
 }
 
-/* ---------- Step 4 ---------- */
-
 function StepDocuments({
   profile,
   toggleDoc,
@@ -480,6 +452,7 @@ function StepDocuments({
   profile: Profile;
   toggleDoc: (key: DocKey, value: boolean) => void;
 }) {
+  const { t } = useI18n();
   const [uploads, setUploads] = useState<Record<string, string>>({});
 
   const onFile = (key: DocKey, file: File | null) => {
@@ -490,10 +463,7 @@ function StepDocuments({
 
   return (
     <div className="space-y-6">
-      <SectionHeading
-        title="Documents you have"
-        subtitle="Tick what you already have, or upload a copy. Files stay in your browser."
-      />
+      <SectionHeading title={t("docsTitle")} subtitle={t("docsSub")} />
       <div className="grid gap-3 sm:grid-cols-2">
         {(Object.keys(DOCUMENT_LABELS) as DocKey[]).map((key) => {
           const label = DOCUMENT_LABELS[key];
@@ -519,7 +489,7 @@ function StepDocuments({
                 <label className="mt-2 flex cursor-pointer items-center gap-2 text-xs text-muted-foreground hover:text-foreground">
                   <Upload className="size-3.5" />
                   <span className="truncate">
-                    {fileName ? `Uploaded: ${fileName}` : "Upload a copy (optional)"}
+                    {fileName ? `${t("uploaded")}: ${fileName}` : t("uploadOptional")}
                   </span>
                   <input
                     type="file"
@@ -536,8 +506,6 @@ function StepDocuments({
     </div>
   );
 }
-
-/* ---------- Shared ---------- */
 
 function SectionHeading({ title, subtitle }: { title: string; subtitle: string }) {
   return (
@@ -556,8 +524,6 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </div>
   );
 }
-
-/* ---------- Results ---------- */
 
 function Results({
   profile,
@@ -605,8 +571,7 @@ function Results({
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {results.eligible.length === 0 && (
             <div className="rounded-2xl border bg-card p-6 text-sm text-muted-foreground md:col-span-2">
-              No matches yet. Try adjusting your details — most people miss a scheme because of an
-              unchecked category, income field, or documents. Use <em>Edit details</em> above.
+              {t("noMatches")}
             </div>
           )}
           {results.eligible.map(({ scheme, missingDocs }) => (
@@ -624,13 +589,13 @@ function Results({
               </div>
               <p className="mt-3 text-sm text-foreground/80">{scheme.summary}</p>
               <div className="mt-4 rounded-lg bg-secondary p-3 text-sm">
-                <span className="font-medium text-ink">Benefit: </span>
+                <span className="font-medium text-ink">{t("benefitLabel")}: </span>
                 <span className="text-foreground/80">{scheme.benefits}</span>
               </div>
 
               {missingDocs.length > 0 ? (
                 <div className="mt-4 rounded-lg border border-dashed p-3 text-xs">
-                  <div className="font-medium text-ink">Still need:</div>
+                  <div className="font-medium text-ink">{t("stillNeedLabel")}</div>
                   <ul className="mt-1 list-disc pl-4 text-muted-foreground">
                     {missingDocs.map((d) => (
                       <li key={d}>{DOCUMENT_LABELS[d]}</li>
@@ -639,7 +604,7 @@ function Results({
                 </div>
               ) : (
                 <div className="mt-4 flex items-center gap-2 text-xs text-success">
-                  <Check className="size-4" /> All required documents ready
+                  <Check className="size-4" /> {t("allDocsReady")}
                 </div>
               )}
 
@@ -649,7 +614,7 @@ function Results({
                 rel="noreferrer"
                 className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
               >
-                Apply on official portal <ArrowRight className="size-3.5" />
+                {t("applyNow")} <ArrowRight className="size-3.5" />
               </a>
             </article>
           ))}
@@ -658,10 +623,8 @@ function Results({
 
       {results.ineligible.length > 0 && (
         <section className="mt-14">
-          <h2 className="font-display text-2xl text-ink">Not eligible right now</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Why each one didn&rsquo;t match — useful if a detail changes later.
-          </p>
+          <h2 className="font-display text-2xl text-ink">{t("notEligibleNow")}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{t("notEligibleSub")}</p>
           <Accordion type="single" collapsible className="mt-4 rounded-2xl border bg-card">
             {results.ineligible.map(({ scheme, reasons }) => (
               <AccordionItem key={scheme.id} value={scheme.id} className="px-4">
@@ -690,15 +653,14 @@ function Results({
   );
 }
 
-/* ---------- Footer ---------- */
-
 function Footer() {
+  const { t } = useI18n();
   return (
     <footer className="border-t bg-parchment">
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:px-6">
         <div>
           <div className="font-display text-base text-ink">YojanaScan</div>
-          <div>Informational tool. Final eligibility is decided by the concerned department.</div>
+          <div>{t("footerInfo")}</div>
         </div>
         <div>© {new Date().getFullYear()} YojanaScan</div>
       </div>
