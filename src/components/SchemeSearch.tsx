@@ -14,11 +14,21 @@ import {
 import { SCHEMES, DOCUMENT_LABELS, type Scheme } from "@/lib/schemes";
 import { useI18n } from "@/lib/i18n";
 
-export function SchemeSearch({ compact = false }: { compact?: boolean }) {
+type Variant = "inline" | "compact" | "icon";
+
+export function SchemeSearch({
+  compact = false,
+  variant,
+}: {
+  compact?: boolean;
+  variant?: Variant;
+}) {
+  const mode: Variant = variant ?? (compact ? "compact" : "inline");
   const { t } = useI18n();
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
   const [selected, setSelected] = useState<Scheme | null>(null);
+  const [iconOpen, setIconOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
   const matches = useMemo(() => {
@@ -42,63 +52,104 @@ export function SchemeSearch({ compact = false }: { compact?: boolean }) {
 
   const showDropdown = focused && query.trim().length > 0;
 
+  const suggestions = (
+    <>
+      {matches.length === 0 ? (
+        <div className="p-4 text-sm text-muted-foreground">{t("noSchemeFound")}</div>
+      ) : (
+        <ul className="max-h-80 overflow-y-auto">
+          {matches.map((s) => (
+            <li key={s.id}>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelected(s);
+                  setFocused(false);
+                  setIconOpen(false);
+                }}
+                className="flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-secondary"
+              >
+                <FileText className="mt-0.5 size-4 shrink-0 text-primary" />
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-sm font-medium text-ink">{s.name}</div>
+                  <div className="truncate text-xs text-muted-foreground">{s.ministry}</div>
+                </div>
+                <Badge variant="secondary" className="shrink-0 text-[10px]">
+                  {s.category}
+                </Badge>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+
   return (
     <>
-      <div ref={boxRef} className={`relative ${compact ? "w-full" : "mx-auto w-full max-w-xl"}`}>
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => setFocused(true)}
-            placeholder={t("searchPlaceholder")}
-            className="h-12 rounded-xl border-border/70 bg-card pl-10 pr-10 text-base shadow-sm"
-            aria-label={t("searchPlaceholder")}
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground hover:bg-secondary hover:text-foreground"
-              aria-label="Clear"
-            >
-              <X className="size-4" />
-            </button>
-          )}
-        </div>
-
-        {showDropdown && (
-          <div className="absolute left-0 right-0 top-full z-40 mt-2 overflow-hidden rounded-xl border bg-popover shadow-lg">
-            {matches.length === 0 ? (
-              <div className="p-4 text-sm text-muted-foreground">{t("noSchemeFound")}</div>
-            ) : (
-              <ul className="max-h-80 overflow-y-auto">
-                {matches.map((s) => (
-                  <li key={s.id}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelected(s);
-                        setFocused(false);
-                      }}
-                      className="flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-secondary"
-                    >
-                      <FileText className="mt-0.5 size-4 shrink-0 text-primary" />
-                      <div className="min-w-0 flex-1">
-                        <div className="truncate text-sm font-medium text-ink">{s.name}</div>
-                        <div className="truncate text-xs text-muted-foreground">{s.ministry}</div>
-                      </div>
-                      <Badge variant="secondary" className="shrink-0 text-[10px]">
-                        {s.category}
-                      </Badge>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+      {mode === "icon" ? (
+        <>
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label={t("searchSchemes")}
+            onClick={() => setIconOpen(true)}
+            className="h-9 w-9 rounded-full border-border/70 bg-card/60 text-ink shadow-sm backdrop-blur"
+          >
+            <Search className="size-4 text-primary" />
+          </Button>
+          <Dialog open={iconOpen} onOpenChange={setIconOpen}>
+            <DialogContent className="max-w-lg p-0">
+              <DialogHeader className="px-4 pt-4">
+                <DialogTitle className="text-base">{t("searchSchemes")}</DialogTitle>
+              </DialogHeader>
+              <div className="relative px-4 pb-2">
+                <Search className="pointer-events-none absolute left-7 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  autoFocus
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t("searchPlaceholder")}
+                  className="h-11 rounded-lg border-border/70 bg-card pl-9"
+                />
+              </div>
+              <div className="border-t">{query.trim() ? suggestions : (
+                <div className="p-4 text-sm text-muted-foreground">{t("searchHint")}</div>
+              )}</div>
+            </DialogContent>
+          </Dialog>
+        </>
+      ) : (
+        <div ref={boxRef} className={`relative ${mode === "compact" ? "w-full" : "mx-auto w-full max-w-xl"}`}>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => setFocused(true)}
+              placeholder={t("searchPlaceholder")}
+              className="h-12 rounded-xl border-border/70 bg-card pl-10 pr-10 text-base shadow-sm"
+              aria-label={t("searchPlaceholder")}
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                aria-label={t("clear")}
+              >
+                <X className="size-4" />
+              </button>
             )}
           </div>
-        )}
-      </div>
+
+          {showDropdown && (
+            <div className="absolute left-0 right-0 top-full z-40 mt-2 overflow-hidden rounded-xl border bg-popover shadow-lg">
+              {suggestions}
+            </div>
+          )}
+        </div>
+      )}
 
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
         <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
@@ -180,10 +231,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-// Produce human-readable eligibility rules by probing the scheme's own function.
 function getEligibilityLines(s: Scheme): string[] {
-  // Reasons emitted by the eligibility fn when the empty profile fails all checks
-  // are the human-readable rules themselves.
   const emptyProfile = {
     name: "",
     age: null,
