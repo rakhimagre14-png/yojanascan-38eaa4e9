@@ -576,50 +576,88 @@ function Results({
               {t("noMatches")}
             </div>
           )}
-          {results.eligible.map(({ scheme, missingDocs }) => (
-            <article
-              key={scheme.id}
-              className="group relative overflow-hidden rounded-2xl border bg-card p-6 shadow-sm"
-            >
-              <div className="absolute right-0 top-0 h-16 w-16 rounded-bl-2xl bg-success/15 text-success">
-                <CheckCircle2 className="absolute right-3 top-3 size-6" />
-              </div>
-              <Badge variant="secondary" className="mb-3">{scheme.category}</Badge>
-              <h3 className="font-display text-xl text-ink">{scheme.name}</h3>
-              <div className="mt-0.5 text-xs uppercase tracking-wider text-muted-foreground">
-                {scheme.ministry}
-              </div>
-              <p className="mt-3 text-sm text-foreground/80">{scheme.summary}</p>
-              <div className="mt-4 rounded-lg bg-secondary p-3 text-sm">
-                <span className="font-medium text-ink">{t("benefitLabel")}: </span>
-                <span className="text-foreground/80">{scheme.benefits}</span>
-              </div>
-
-              {missingDocs.length > 0 ? (
-                <div className="mt-4 rounded-lg border border-dashed p-3 text-xs">
-                  <div className="font-medium text-ink">{t("stillNeedLabel")}</div>
-                  <ul className="mt-1 list-disc pl-4 text-muted-foreground">
-                    {missingDocs.map((d) => (
-                      <li key={d}>{DOCUMENT_LABELS[d]}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                <div className="mt-4 flex items-center gap-2 text-xs text-success">
-                  <Check className="size-4" /> {t("allDocsReady")}
-                </div>
-              )}
-
-              <a
-                href={scheme.link}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+          {results.eligible.map(({ scheme, missingDocs }) => {
+            const now = new Date();
+            const deadline = scheme.lastDate ? new Date(scheme.lastDate) : null;
+            const closed = deadline ? deadline.getTime() < now.setHours(0, 0, 0, 0) : false;
+            const deadlineText = closed
+              ? t("appClosed")
+              : deadline
+                ? new Intl.DateTimeFormat(undefined, {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  }).format(deadline)
+                : t("appOpen");
+            return (
+              <article
+                key={scheme.id}
+                className="group relative overflow-hidden rounded-2xl border bg-card p-6 shadow-sm"
               >
-                {t("applyNow")} <ArrowRight className="size-3.5" />
-              </a>
-            </article>
-          ))}
+                <div className="absolute right-0 top-0 h-16 w-16 rounded-bl-2xl bg-success/15 text-success">
+                  <CheckCircle2 className="absolute right-3 top-3 size-6" />
+                </div>
+                <Badge variant="secondary" className="mb-3">{scheme.category}</Badge>
+                <h3 className="font-display text-xl text-ink">{scheme.name}</h3>
+                <div className="mt-0.5 text-xs uppercase tracking-wider text-muted-foreground">
+                  {scheme.ministry}
+                </div>
+                <p className="mt-3 text-sm text-foreground/80">{scheme.summary}</p>
+                <div className="mt-4 rounded-lg bg-secondary p-3 text-sm">
+                  <span className="font-medium text-ink">{t("benefitLabel")}: </span>
+                  <span className="text-foreground/80">{scheme.benefits}</span>
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+                  <span className="font-medium text-ink">{t("deadlineLabel")}:</span>
+                  <span
+                    className={
+                      closed
+                        ? "font-semibold text-destructive"
+                        : deadline
+                          ? "text-foreground/80"
+                          : "text-muted-foreground"
+                    }
+                  >
+                    {deadlineText}
+                  </span>
+                </div>
+
+                {missingDocs.length > 0 ? (
+                  <div className="mt-4 rounded-lg border border-dashed p-3 text-xs">
+                    <div className="font-medium text-ink">{t("stillNeedLabel")}</div>
+                    <ul className="mt-1 list-disc pl-4 text-muted-foreground">
+                      {missingDocs.map((d) => (
+                        <li key={d}>{DOCUMENT_LABELS[d]}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <div className="mt-4 flex items-center gap-2 text-xs text-success">
+                    <Check className="size-4" /> {t("allDocsReady")}
+                  </div>
+                )}
+
+                {closed ? (
+                  <span
+                    className="mt-5 inline-flex cursor-not-allowed items-center gap-1 text-sm font-medium text-muted-foreground opacity-60"
+                    aria-disabled="true"
+                  >
+                    {t("appClosed")}
+                  </span>
+                ) : (
+                  <a
+                    href={scheme.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                  >
+                    {t("applyNow")} <ArrowRight className="size-3.5" />
+                  </a>
+                )}
+              </article>
+            );
+          })}
         </div>
       </section>
 
