@@ -85,14 +85,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Enter your details and instantly discover Indian central and state government schemes you qualify for. Free eligibility scanner.",
       },
       { name: "author", content: "YojanaScan" },
-      { property: "og:title", content: "YojanaScan — Government Scheme Eligibility Scanner" },
+      { property: "og:title", content: "YojanaScan — Find Government Schemes You're Eligible For" },
       {
         property: "og:description",
         content:
-          "Answer a few questions and see every government scheme you qualify for — scholarships, housing, farming, health and more.",
+          "Enter your details and instantly discover Indian central and state government schemes you qualify for. Free eligibility scanner.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "YojanaScan — Find Government Schemes You're Eligible For" },
+      { name: "twitter:description", content: "Enter your details and instantly discover Indian central and state government schemes you qualify for. Free eligibility scanner." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/b1975d78-29f5-4bd7-b728-8e9ab4e4fdb3" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/b1975d78-29f5-4bd7-b728-8e9ab4e4fdb3" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
