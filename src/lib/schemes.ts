@@ -62,6 +62,12 @@ export type Scheme = {
   benefits: string;
   requiredDocs: DocKey[];
   link: string;
+  /**
+   * Official application deadline as ISO date (YYYY-MM-DD).
+   * `undefined` = continuously open / no announced deadline.
+   * We do NOT guess deadlines — only verified official dates are set.
+   */
+  lastDate?: string;
   eligible: (p: Profile) => { ok: boolean; reasons: string[] };
 };
 
