@@ -44,6 +44,7 @@ import {
 import { useI18n } from "@/lib/i18n";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { SchemeSearch } from "@/components/SchemeSearch";
+import { AiHelp } from "@/components/AiHelp";
 
 export const Route = createFileRoute("/")({
   component: Home,
