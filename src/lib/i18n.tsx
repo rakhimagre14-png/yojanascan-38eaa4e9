@@ -120,6 +120,18 @@ const en: Dict = {
   applyNow: "Apply now",
   stillNeedLabel: "Still need:",
   footerInfo: "Informational tool. Final eligibility is decided by the concerned department.",
+  deadlineLabel: "Last date to apply",
+  appOpen: "Applications are currently open",
+  noDeadline: "No last date announced",
+  appClosed: "Application Closed",
+  aiHelp: "AI Help",
+  chatTitle: "Scheme Assistant",
+  chatSubtitle: "Ask about eligibility, documents, or how to apply.",
+  chatPlaceholder: "Ask about any scheme…",
+  chatSend: "Send",
+  chatGreeting: "Hi! I can help you understand government schemes, eligibility, required documents, and how to apply. What would you like to know?",
+  chatError: "Something went wrong. Please try again.",
+  chatThinking: "Thinking…",
 };
 
 // Concise translations — UI strings only. Scheme data stays in English.
