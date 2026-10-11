@@ -147,3 +147,41 @@ export function AiHelp() {
     </>
   );
 }
+
+function renderInline(line: string, key: string) {
+  const parts = line.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\(https?:\/\/[^)\s]+\)|https?:\/\/[^\s)]+)/g);
+  return parts.map((p, i) => {
+    const k = `${key}-${i}`;
+    if (p.startsWith("**") && p.endsWith("**")) return <strong key={k}>{p.slice(2, -2)}</strong>;
+    const md = p.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+    const url = md ? md[2] : /^https?:\/\//.test(p) ? p : null;
+    if (url)
+      return (
+        <a key={k} href={url} target="_blank" rel="noopener noreferrer" className="break-all font-medium text-primary underline">
+          {md ? md[1] : p}
+        </a>
+      );
+    return <span key={k}>{p}</span>;
+  });
+}
+
+function SimpleMarkdown({ text }: { text: string }) {
+  const lines = text.split("\n");
+  return (
+    <div className="space-y-1 whitespace-normal">
+      {lines.map((raw, i) => {
+        const line = raw.replace(/^#{1,6}\s+/, "");
+        const bullet = line.match(/^\s*[*\-•]\s+(.*)$/);
+        if (bullet)
+          return (
+            <div key={i} className="flex gap-2 pl-1">
+              <span aria-hidden>•</span>
+              <span>{renderInline(bullet[1], String(i))}</span>
+            </div>
+          );
+        if (!line.trim()) return <div key={i} className="h-1" />;
+        return <p key={i}>{renderInline(line, String(i))}</p>;
+      })}
+    </div>
+  );
+}
