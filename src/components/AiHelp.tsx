@@ -44,9 +44,10 @@ export function AiHelp() {
           messages: next.map((m) => ({ role: m.role, content: m.content })),
         }),
       });
-      const data = (await res.json()) as { reply?: string; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { reply?: string; error?: string };
       if (!res.ok || !data.reply) {
-        setMessages((m) => [...m, { role: "assistant", content: t("chatError") }]);
+        const err = lang === "en" && data.error ? data.error : t("chatError");
+        setMessages((m) => [...m, { role: "assistant", content: `⚠️ ${err}` }]);
       } else {
         setMessages((m) => [...m, { role: "assistant", content: data.reply! }]);
       }
@@ -103,7 +104,7 @@ export function AiHelp() {
                       : "bg-secondary text-foreground"
                   }`}
                 >
-                  {m.content}
+                  {m.role === "assistant" ? <SimpleMarkdown text={m.content} /> : m.content}
                 </div>
               </div>
             ))}
@@ -144,5 +145,43 @@ export function AiHelp() {
         </div>
       )}
     </>
+  );
+}
+
+function renderInline(line: string, key: string) {
+  const parts = line.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\(https?:\/\/[^)\s]+\)|https?:\/\/[^\s)]+)/g);
+  return parts.map((p, i) => {
+    const k = `${key}-${i}`;
+    if (p.startsWith("**") && p.endsWith("**")) return <strong key={k}>{p.slice(2, -2)}</strong>;
+    const md = p.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+    const url = md ? md[2] : /^https?:\/\//.test(p) ? p : null;
+    if (url)
+      return (
+        <a key={k} href={url} target="_blank" rel="noopener noreferrer" className="break-all font-medium text-primary underline">
+          {md ? md[1] : p}
+        </a>
+      );
+    return <span key={k}>{p}</span>;
+  });
+}
+
+function SimpleMarkdown({ text }: { text: string }) {
+  const lines = text.split("\n");
+  return (
+    <div className="space-y-1 whitespace-normal">
+      {lines.map((raw, i) => {
+        const line = raw.replace(/^#{1,6}\s+/, "");
+        const bullet = line.match(/^\s*[*\-•]\s+(.*)$/);
+        if (bullet)
+          return (
+            <div key={i} className="flex gap-2 pl-1">
+              <span aria-hidden>•</span>
+              <span>{renderInline(bullet[1], String(i))}</span>
+            </div>
+          );
+        if (!line.trim() || /^\s*-{3,}\s*$/.test(line)) return <div key={i} className="h-1" />;
+        return <p key={i}>{renderInline(line, String(i))}</p>;
+      })}
+    </div>
   );
 }
