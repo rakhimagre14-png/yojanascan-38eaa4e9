@@ -44,9 +44,10 @@ export function AiHelp() {
           messages: next.map((m) => ({ role: m.role, content: m.content })),
         }),
       });
-      const data = (await res.json()) as { reply?: string; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { reply?: string; error?: string };
       if (!res.ok || !data.reply) {
-        setMessages((m) => [...m, { role: "assistant", content: t("chatError") }]);
+        const err = lang === "en" && data.error ? data.error : t("chatError");
+        setMessages((m) => [...m, { role: "assistant", content: `⚠️ ${err}` }]);
       } else {
         setMessages((m) => [...m, { role: "assistant", content: data.reply! }]);
       }
@@ -103,7 +104,7 @@ export function AiHelp() {
                       : "bg-secondary text-foreground"
                   }`}
                 >
-                  {m.content}
+                  {m.role === "assistant" ? <SimpleMarkdown text={m.content} /> : m.content}
                 </div>
               </div>
             ))}
