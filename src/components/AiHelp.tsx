@@ -179,7 +179,7 @@ function SimpleMarkdown({ text }: { text: string }) {
               <span>{renderInline(bullet[1], String(i))}</span>
             </div>
           );
-        if (!line.trim()) return <div key={i} className="h-1" />;
+        if (!line.trim() || /^\s*-{3,}\s*$/.test(line)) return <div key={i} className="h-1" />;
         return <p key={i}>{renderInline(line, String(i))}</p>;
       })}
     </div>
